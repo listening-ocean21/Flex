@@ -165,6 +165,8 @@ std::map<NvFlexDistanceFieldId, GpuMesh*> g_fields;
 // flag to request collision shapes be updated
 bool g_shapesChanged = false;
 
+bool isExport = false;
+
 /* Note that this array of colors is altered by demo code, and is also read from global by graphics API impls */
 Colour g_colors[] =
 {
@@ -1252,8 +1254,11 @@ void RenderScene()
 		{
 			// copy data directly from solver to the renderer buffers
 			UpdateFluidRenderBuffers(g_fluidRenderBuffers, g_solver, g_drawEllipsoids, g_drawDensity);
-			ExportPartices(g_fluidRenderBuffers);
-			return;
+			if (isExport)
+			{
+				ExportPartices(g_fluidRenderBuffers);
+				//return;
+			}
 		}
 		else
 		{
@@ -2565,6 +2570,9 @@ void InputKeyboardUp(unsigned char key, int x, int y)
 		g_camVel.y = 0.0f;
 		break;
 	}
+	case 'm':
+		isExport = !isExport;
+		break;
 	};
 }
 

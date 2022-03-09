@@ -6,20 +6,19 @@
 
 struct SParticle
 {
-	float positionX;
-	float positionY;
-	float positionZ;
+	float3 position;
 	float density;
+	float4 aniX;
+	float4 aniY;
+	float4 aniZ;
 };
 
-bool isOver = false;
+int frame = 0;
 void ExportPartices(FluidRenderBuffers* vBuffer)
 {
-	if (isOver) return;
-
 	FluidRenderBuffersD3D11& buffer = *reinterpret_cast<FluidRenderBuffersD3D11*>(vBuffer);
 	AppGraphCtxD3D11* context = reinterpret_cast<DemoContextD3D11*>(GetDemoContext())->m_appGraphCtxD3D11;
-	ID3D11Buffer *posBuffer, *densityBuffer;
+	ID3D11Buffer *posBuffer, *densityBuffer, *aniBuffer[3];
 	{
 		D3D11_BUFFER_DESC bfDESC;
 
@@ -48,27 +47,52 @@ void ExportPartices(FluidRenderBuffers* vBuffer)
 		context->m_deviceContext->CopyResource(densityBuffer, buffer.m_densities.Get());
 	}
 
-	D3D11_MAPPED_SUBRESOURCE resultResources1, resultResources2;
-	ZeroMemory(&resultResources1, sizeof(D3D11_MAPPED_SUBRESOURCE));
-	ZeroMemory(&resultResources2, sizeof(D3D11_MAPPED_SUBRESOURCE));
-	
-	context->m_deviceContext->Map(posBuffer, 0, D3D11_MAP_READ, 0, &resultResources1);
-	SParticle* p = (SParticle*)resultResources1.pData;
-	context->m_deviceContext->Map(densityBuffer, 0, D3D11_MAP_READ, 0, &resultResources2);
-	float* pp = (float*)resultResources2.pData;
-	SParticle* data = new SParticle[buffer.m_numParticles];
-	for (int i = 0; i < buffer.m_numParticles; i++)
 	{
-		data[i].positionX = p[i].positionX;
-		data[i].positionY = p[i].positionY;
-		data[i].positionZ = p[i].positionZ;
-		data[i].density = *pp;
+		D3D11_BUFFER_DESC bfDESC;
+
+		ZeroMemory(&bfDESC, sizeof(D3D11_BUFFER_DESC));
+
+		buffer.m_anisotropiesArr[0].Get()->GetDesc(&bfDESC);
+		bfDESC.BindFlags = 0;
+		bfDESC.MiscFlags = 0;
+		bfDESC.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+		bfDESC.Usage = D3D11_USAGE_STAGING;
+		context->m_device->CreateBuffer(&bfDESC, NULL, &aniBuffer[0]);
+		context->m_deviceContext->CopyResource(aniBuffer[0], buffer.m_anisotropiesArr[0].Get());
 	}
-	context->m_deviceContext->Unmap(posBuffer, 0);
-	context->m_deviceContext->Unmap(densityBuffer, 0);
+
+	{
+		D3D11_BUFFER_DESC bfDESC;
+
+		ZeroMemory(&bfDESC, sizeof(D3D11_BUFFER_DESC));
+
+		buffer.m_anisotropiesArr[1].Get()->GetDesc(&bfDESC);
+		bfDESC.BindFlags = 0;
+		bfDESC.MiscFlags = 0;
+		bfDESC.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+		bfDESC.Usage = D3D11_USAGE_STAGING;
+		context->m_device->CreateBuffer(&bfDESC, NULL, &aniBuffer[1]);
+		context->m_deviceContext->CopyResource(aniBuffer[1], buffer.m_anisotropiesArr[1].Get());
+	}
+
+	{
+		D3D11_BUFFER_DESC bfDESC;
+
+		ZeroMemory(&bfDESC, sizeof(D3D11_BUFFER_DESC));
+
+		buffer.m_anisotropiesArr[2].Get()->GetDesc(&bfDESC);
+		bfDESC.BindFlags = 0;
+		bfDESC.MiscFlags = 0;
+		bfDESC.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+		bfDESC.Usage = D3D11_USAGE_STAGING;
+		context->m_device->CreateBuffer(&bfDESC, NULL, &aniBuffer[2]);
+		context->m_deviceContext->CopyResource(aniBuffer[2], buffer.m_anisotropiesArr[2].Get());
+	}
+
+
 
 	std::string exportFileName = "C:/Users/WT/Documents/Projects/6Fluid Rendering/Large Scale Fluid/Assets/Resources/OfflineSPHData/";
-	exportFileName += std::to_string(1);
+	exportFileName += std::to_string(frame);
 	exportFileName += ".bin";
 	std::ofstream* outfile = new std::ofstream(exportFileName, std::ios::binary);
 	if (!outfile->is_open())
@@ -77,12 +101,40 @@ void ExportPartices(FluidRenderBuffers* vBuffer)
 		return;
 	}
 
-	for (unsigned int i = 0; i < buffer.m_numParticles; i++)
+	D3D11_MAPPED_SUBRESOURCE resultResources1, resultResources2, resultResources3, resultResources4, resultResources5;
+	ZeroMemory(&resultResources1, sizeof(D3D11_MAPPED_SUBRESOURCE));
+	ZeroMemory(&resultResources2, sizeof(D3D11_MAPPED_SUBRESOURCE));
+	ZeroMemory(&resultResources3, sizeof(D3D11_MAPPED_SUBRESOURCE));
+	ZeroMemory(&resultResources4, sizeof(D3D11_MAPPED_SUBRESOURCE));
+	ZeroMemory(&resultResources5, sizeof(D3D11_MAPPED_SUBRESOURCE));
+	
+	context->m_deviceContext->Map(posBuffer, 0, D3D11_MAP_READ, 0, &resultResources1);
+	float4* p1 = (float4*)resultResources1.pData;
+	context->m_deviceContext->Map(densityBuffer, 0, D3D11_MAP_READ, 0, &resultResources2);
+	float* p2 = (float*)resultResources2.pData;
+	context->m_deviceContext->Map(aniBuffer[0], 0, D3D11_MAP_READ, 0, &resultResources3);
+	float4* p3 = (float4*)resultResources3.pData;
+	context->m_deviceContext->Map(aniBuffer[1], 0, D3D11_MAP_READ, 0, &resultResources4);
+	float4* p4 = (float4*)resultResources4.pData;
+	context->m_deviceContext->Map(aniBuffer[2], 0, D3D11_MAP_READ, 0, &resultResources5);
+	float4* p5 = (float4*)resultResources5.pData;
+	for (int i = 0; i < buffer.m_numParticles; i++)
 	{
-		outfile->write((char*)&data[i], sizeof(SParticle));
+		SParticle data;
+		data.position = float3(p1[i].x, p1[i].y, p1[i].z);
+		data.density = p2[i];
+		data.aniX = p3[i];
+		data.aniY = p4[i];
+		data.aniZ = p5[i];
+
+		outfile->write((char*)&data, sizeof(SParticle));
 	}
+	context->m_deviceContext->Unmap(posBuffer, 0);
+	context->m_deviceContext->Unmap(densityBuffer, 0);
 
 	outfile->close();
 	delete outfile;
+
+	frame++;
 }
 

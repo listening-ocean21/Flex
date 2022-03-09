@@ -51,8 +51,8 @@ public:
 		// draw options
 		g_drawDensity = true;
 		g_drawDiffuse = false;
-		g_drawEllipsoids = false;
-		g_drawPoints = true;
+		g_drawEllipsoids = true;
+		g_drawPoints = false;
 
 		g_warmup = true;
 	}

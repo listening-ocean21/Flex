@@ -120,6 +120,7 @@
     <LocalDebuggerWorkingDirectory>$(OutputPath)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\d3d\shaders\shaderCommon.h" />
     <ClInclude Include="..\..\ParticleExporter.h" />
     <ClInclude Include="..\..\scenes\adhesion.h">
     </ClInclude>
