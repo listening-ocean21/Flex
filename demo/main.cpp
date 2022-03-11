@@ -1247,16 +1247,16 @@ void RenderScene()
 	// use VBO buffer wrappers to allow Flex to write directly to the OpenGL buffers
 	// Flex will take care of any CUDA interop mapping/unmapping during the get() operations
 
+	std::string exportFilePath = "E:/Large Scale Fluid/Assets/Resources/OfflineSPHData/";
 	if (numParticles)
 	{
-
 		if (g_interop)
 		{
 			// copy data directly from solver to the renderer buffers
 			UpdateFluidRenderBuffers(g_fluidRenderBuffers, g_solver, g_drawEllipsoids, g_drawDensity);
 			if (isExport)
 			{
-				ExportPartices(g_fluidRenderBuffers);
+				ExportPartices(g_fluidRenderBuffers, exportFilePath, g_frame);
 				//return;
 			}
 		}
@@ -1300,6 +1300,11 @@ void RenderScene()
 		{
 			// copy data directly from solver to the renderer buffers
 			UpdateDiffuseRenderBuffers(g_diffuseRenderBuffers, g_solver);
+			if (isExport)
+			{
+				ExportDiffusePartices(g_diffuseRenderBuffers, exportFilePath, g_frame);
+				//return;
+			}
 		}
 		else
 		{
@@ -1310,7 +1315,7 @@ void RenderScene()
 				numDiffuse);
 		}
 	}
-	
+
 	//---------------------------------------
 	// setup view and state
 
