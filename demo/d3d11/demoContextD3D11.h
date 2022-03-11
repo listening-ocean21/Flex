@@ -120,5 +120,5 @@ protected:
 	bool m_timersSet = false;
 
 	friend void ExportPartices(FluidRenderBuffers* vBuffer, std::string vExportFilePath, int vFrameIndex);
-	friend void ExportDiffusePartices(DiffuseRenderBuffers* diffuseBuffers, std::string vExportFilePath, int vFrameIndex);
+	friend void ExportDiffusePartices(DiffuseRenderBuffers* diffuseBuffers, std::string vExportFilePath, int vFrameIndex); 
 };

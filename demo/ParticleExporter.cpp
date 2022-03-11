@@ -23,7 +23,7 @@ void ExportPartices(FluidRenderBuffers* vBuffer, std::string vExportFilePath, in
 {
 	FluidRenderBuffersD3D11& buffer = *reinterpret_cast<FluidRenderBuffersD3D11*>(vBuffer);
 	AppGraphCtxD3D11* context = reinterpret_cast<DemoContextD3D11*>(GetDemoContext())->m_appGraphCtxD3D11;
-	ID3D11Buffer *posBuffer, *densityBuffer, *aniBuffer[3];
+	ID3D11Buffer* posBuffer, * densityBuffer, * aniBuffer[3];
 	{
 		D3D11_BUFFER_DESC bfDESC;
 
@@ -97,11 +97,11 @@ void ExportPartices(FluidRenderBuffers* vBuffer, std::string vExportFilePath, in
 
 
 	vExportFilePath += std::to_string(vFrameIndex);
-	vExportFilePath += ".bin";
+	vExportFilePath += ".particle";
 	std::ofstream* outfile = new std::ofstream(vExportFilePath, std::ios::binary);
 	if (!outfile->is_open())
 	{
-		std::cout << "Cannot open a file to save VTK particles.";
+		std::cout << "Cannot open a file to save particles.";
 		return;
 	}
 
@@ -111,7 +111,7 @@ void ExportPartices(FluidRenderBuffers* vBuffer, std::string vExportFilePath, in
 	ZeroMemory(&resultResources3, sizeof(D3D11_MAPPED_SUBRESOURCE));
 	ZeroMemory(&resultResources4, sizeof(D3D11_MAPPED_SUBRESOURCE));
 	ZeroMemory(&resultResources5, sizeof(D3D11_MAPPED_SUBRESOURCE));
-	
+
 	context->m_deviceContext->Map(posBuffer, 0, D3D11_MAP_READ, 0, &resultResources1);
 	float4* p1 = (float4*)resultResources1.pData;
 	context->m_deviceContext->Map(densityBuffer, 0, D3D11_MAP_READ, 0, &resultResources2);
@@ -140,7 +140,7 @@ void ExportPartices(FluidRenderBuffers* vBuffer, std::string vExportFilePath, in
 	delete outfile;
 }
 
-void ExportDiffusePartices(DiffuseRenderBuffers* diffuseBuffers, std::string vExportFilePath,int vFrameIndex)
+void ExportDiffusePartices(DiffuseRenderBuffers* diffuseBuffers, std::string vExportFilePath, int vFrameIndex)
 {
 	DiffuseRenderBuffersD3D11& buffer = *reinterpret_cast<DiffuseRenderBuffersD3D11*>(diffuseBuffers);
 	AppGraphCtxD3D11* context = reinterpret_cast<DemoContextD3D11*>(GetDemoContext())->m_appGraphCtxD3D11;
@@ -164,7 +164,7 @@ void ExportDiffusePartices(DiffuseRenderBuffers* diffuseBuffers, std::string vEx
 	std::ofstream* outfile = new std::ofstream(vExportFilePath, std::ios::binary);
 	if (!outfile->is_open())
 	{
-		std::cout << "Cannot open a file to save VTK particles.";
+		std::cout << "Cannot open a file to save diffuse particles.";
 		return;
 	}
 

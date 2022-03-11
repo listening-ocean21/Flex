@@ -168,9 +168,6 @@
     <ClInclude Include="..\..\scenes\waterballoon.h">
       <Filter>demo\scenes</Filter>
     </ClInclude>
-    <ClInclude Include="testFluid.h">
-      <Filter>demo\scenes</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\scenes\testFluid.h">
       <Filter>demo\scenes</Filter>
     </ClInclude>
