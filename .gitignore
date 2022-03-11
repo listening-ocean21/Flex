@@ -4,6 +4,10 @@
 *.exp
 *.ilk
 .vs
+*.vcxproj
+*.dll
+*.exe
+*.lib
 build
 
 # android
