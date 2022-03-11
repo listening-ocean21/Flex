@@ -3,6 +3,7 @@
 #include "demoContextD3D11.h"
 #include "appD3D11Ctx.h"
 #include <fstream>
+#include <demo\d3d11\diffuseRenderD3D11.h>
 
 struct SParticle
 {
@@ -13,12 +14,16 @@ struct SParticle
 	float4 aniZ;
 };
 
-int frame = 0;
-void ExportPartices(FluidRenderBuffers* vBuffer)
+struct SDiffuseParticle
+{
+	float3 position;
+};
+
+void ExportPartices(FluidRenderBuffers* vBuffer, std::string vExportFilePath, int vFrameIndex)
 {
 	FluidRenderBuffersD3D11& buffer = *reinterpret_cast<FluidRenderBuffersD3D11*>(vBuffer);
 	AppGraphCtxD3D11* context = reinterpret_cast<DemoContextD3D11*>(GetDemoContext())->m_appGraphCtxD3D11;
-	ID3D11Buffer *posBuffer, *densityBuffer, *aniBuffer[3];
+	ID3D11Buffer* posBuffer, * densityBuffer, * aniBuffer[3];
 	{
 		D3D11_BUFFER_DESC bfDESC;
 
@@ -91,13 +96,12 @@ void ExportPartices(FluidRenderBuffers* vBuffer)
 
 
 
-	std::string exportFileName = "C:/Users/WT/Documents/Projects/6Fluid Rendering/Large Scale Fluid/Assets/Resources/OfflineSPHData/";
-	exportFileName += std::to_string(frame);
-	exportFileName += ".bin";
-	std::ofstream* outfile = new std::ofstream(exportFileName, std::ios::binary);
+	vExportFilePath += std::to_string(vFrameIndex);
+	vExportFilePath += ".particle";
+	std::ofstream* outfile = new std::ofstream(vExportFilePath, std::ios::binary);
 	if (!outfile->is_open())
 	{
-		std::cout << "Cannot open a file to save VTK particles.";
+		std::cout << "Cannot open a file to save particles.";
 		return;
 	}
 
@@ -107,7 +111,7 @@ void ExportPartices(FluidRenderBuffers* vBuffer)
 	ZeroMemory(&resultResources3, sizeof(D3D11_MAPPED_SUBRESOURCE));
 	ZeroMemory(&resultResources4, sizeof(D3D11_MAPPED_SUBRESOURCE));
 	ZeroMemory(&resultResources5, sizeof(D3D11_MAPPED_SUBRESOURCE));
-	
+
 	context->m_deviceContext->Map(posBuffer, 0, D3D11_MAP_READ, 0, &resultResources1);
 	float4* p1 = (float4*)resultResources1.pData;
 	context->m_deviceContext->Map(densityBuffer, 0, D3D11_MAP_READ, 0, &resultResources2);
@@ -134,7 +138,50 @@ void ExportPartices(FluidRenderBuffers* vBuffer)
 
 	outfile->close();
 	delete outfile;
-
-	frame++;
 }
 
+void ExportDiffusePartices(DiffuseRenderBuffers* diffuseBuffers, std::string vExportFilePath, int vFrameIndex)
+{
+	DiffuseRenderBuffersD3D11& buffer = *reinterpret_cast<DiffuseRenderBuffersD3D11*>(diffuseBuffers);
+	AppGraphCtxD3D11* context = reinterpret_cast<DemoContextD3D11*>(GetDemoContext())->m_appGraphCtxD3D11;
+	ID3D11Buffer* posBuffer;
+	{
+		D3D11_BUFFER_DESC bfDESC;
+
+		ZeroMemory(&bfDESC, sizeof(D3D11_BUFFER_DESC));
+
+		buffer.m_positions.Get()->GetDesc(&bfDESC);
+		bfDESC.BindFlags = 0;
+		bfDESC.MiscFlags = 0;
+		bfDESC.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+		bfDESC.Usage = D3D11_USAGE_STAGING;
+		context->m_device->CreateBuffer(&bfDESC, NULL, &posBuffer);
+		context->m_deviceContext->CopyResource(posBuffer, buffer.m_positions.Get());
+	}
+
+	vExportFilePath += std::to_string(vFrameIndex);
+	vExportFilePath += ".diffuse";
+	std::ofstream* outfile = new std::ofstream(vExportFilePath, std::ios::binary);
+	if (!outfile->is_open())
+	{
+		std::cout << "Cannot open a file to save diffuse particles.";
+		return;
+	}
+
+	D3D11_MAPPED_SUBRESOURCE resultResources1;
+	ZeroMemory(&resultResources1, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	context->m_deviceContext->Map(posBuffer, 0, D3D11_MAP_READ, 0, &resultResources1);
+	float4* p1 = (float4*)resultResources1.pData;
+	for (int i = 0; i < buffer.m_numParticles; i++)
+	{
+		SDiffuseParticle data;
+		data.position = float3(p1[i].x, p1[i].y, p1[i].z);
+
+		outfile->write((char*)&data, sizeof(SDiffuseParticle));
+	}
+	context->m_deviceContext->Unmap(posBuffer, 0);
+
+	outfile->close();
+	delete outfile;
+}

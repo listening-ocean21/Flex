@@ -29,8 +29,8 @@ public:
 		int y = int(sizey / restDistance);
 		int z = int(sizez / restDistance);
 
-		CreateParticleGrid(Vec3(0.0f, restDistance * 0.5f, 0.0f), x, y, z, restDistance, Vec3(0.0f), 1.0f, false, 0.0f, NvFlexMakePhase(group++, eNvFlexPhaseSelfCollide | eNvFlexPhaseFluid));
-		//CreateParticleGrid(Vec3(5, restDistance*0.5f, 5), x, y * 2, z, restDistance, Vec3(0.0f), 1.0f, false, 0.0f, NvFlexMakePhase(group++, eNvFlexPhaseSelfCollide | eNvFlexPhaseFluid));
+		CreateParticleGrid(Vec3(0.0f, restDistance * 0.5f, 0.0f), x, y, z, restDistance, Vec3(0.0f), 1.0f, false, 0.0f, NvFlexMakePhase(0, eNvFlexPhaseSelfCollide | eNvFlexPhaseFluid));
+		CreateParticleGrid(Vec3(5, restDistance*0.5f, 5), x, y * 2, z, restDistance, Vec3(0.0f), 1.0f, false, 0.0f, NvFlexMakePhase(0, eNvFlexPhaseSelfCollide | eNvFlexPhaseFluid));
 
 		g_params.radius = radius;
 		g_params.dynamicFriction = 0.0f;

@@ -229,7 +229,6 @@
     </ClInclude>
     <ClInclude Include="..\..\scenes\waterballoon.h">
     </ClInclude>
-    <ClInclude Include="testFluid.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\imgui.cpp">
