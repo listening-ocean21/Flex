@@ -16,7 +16,8 @@ struct SParticle
 
 struct SDiffuseParticle
 {
-	float3 position;
+	float4 position; // lifetime in w
+	float3 velocity;
 };
 
 void ExportPartices(FluidRenderBuffers* vBuffer, std::string vExportFilePath, int vFrameIndex)
@@ -144,7 +145,7 @@ void ExportDiffusePartices(DiffuseRenderBuffers* diffuseBuffers, std::string vEx
 {
 	DiffuseRenderBuffersD3D11& buffer = *reinterpret_cast<DiffuseRenderBuffersD3D11*>(diffuseBuffers);
 	AppGraphCtxD3D11* context = reinterpret_cast<DemoContextD3D11*>(GetDemoContext())->m_appGraphCtxD3D11;
-	ID3D11Buffer* posBuffer;
+	ID3D11Buffer* posBuffer, * velocityBuffer;
 	{
 		D3D11_BUFFER_DESC bfDESC;
 
@@ -159,6 +160,19 @@ void ExportDiffusePartices(DiffuseRenderBuffers* diffuseBuffers, std::string vEx
 		context->m_deviceContext->CopyResource(posBuffer, buffer.m_positions.Get());
 	}
 
+	{
+		D3D11_BUFFER_DESC bfDESC;
+
+		ZeroMemory(&bfDESC, sizeof(D3D11_BUFFER_DESC));
+
+		buffer.m_velocities.Get()->GetDesc(&bfDESC);
+		bfDESC.BindFlags = 0;
+		bfDESC.MiscFlags = 0;
+		bfDESC.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+		bfDESC.Usage = D3D11_USAGE_STAGING;
+		context->m_device->CreateBuffer(&bfDESC, NULL, &velocityBuffer);
+		context->m_deviceContext->CopyResource(velocityBuffer, buffer.m_velocities.Get());
+	}
 	vExportFilePath += std::to_string(vFrameIndex);
 	vExportFilePath += ".diffuse";
 	std::ofstream* outfile = new std::ofstream(vExportFilePath, std::ios::binary);
@@ -168,16 +182,19 @@ void ExportDiffusePartices(DiffuseRenderBuffers* diffuseBuffers, std::string vEx
 		return;
 	}
 
-	D3D11_MAPPED_SUBRESOURCE resultResources1;
+	D3D11_MAPPED_SUBRESOURCE resultResources1, resultResources2;
 	ZeroMemory(&resultResources1, sizeof(D3D11_MAPPED_SUBRESOURCE));
+	ZeroMemory(&resultResources2, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
 	context->m_deviceContext->Map(posBuffer, 0, D3D11_MAP_READ, 0, &resultResources1);
+	context->m_deviceContext->Map(velocityBuffer, 0, D3D11_MAP_READ, 0, &resultResources2);
 	float4* p1 = (float4*)resultResources1.pData;
+	float4* p2 = (float4*)resultResources2.pData;
 	for (int i = 0; i < buffer.m_numParticles; i++)
 	{
 		SDiffuseParticle data;
-		data.position = float3(p1[i].x, p1[i].y, p1[i].z);
-
+		data.position = float4(p1[i].x, p1[i].y, p1[i].z, p1[i].w);
+		data.velocity = float3(p2[i].x, p2[i].y, p2[i].z);
 		outfile->write((char*)&data, sizeof(SDiffuseParticle));
 	}
 	context->m_deviceContext->Unmap(posBuffer, 0);
