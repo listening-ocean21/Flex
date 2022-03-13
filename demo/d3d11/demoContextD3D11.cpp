@@ -451,8 +451,12 @@ FluidRenderBuffers* DemoContextD3D11::createFluidRenderBuffers(int numParticles,
 		device->CreateBuffer(&bufDesc, NULL, &buffers->m_anisotropiesArr[1]);
 		device->CreateBuffer(&bufDesc, NULL, &buffers->m_anisotropiesArr[2]);
 
-		bufDesc.ByteWidth = numParticles*sizeof(float);
+		bufDesc.ByteWidth = numParticles * sizeof(float);
 		device->CreateBuffer(&bufDesc, NULL, &buffers->m_densities);
+
+
+		bufDesc.ByteWidth = numParticles * sizeof(Vec3);
+		device->CreateBuffer(&bufDesc, NULL, &buffers->m_velocities);
 	}
 
 	{
@@ -473,6 +477,7 @@ FluidRenderBuffers* DemoContextD3D11::createFluidRenderBuffers(int numParticles,
 
 		buffers->m_positionsBuf = NvFlexRegisterD3DBuffer(g_flexLib, buffers->m_positions.Get(), numParticles, sizeof(Vec4));
 		buffers->m_densitiesBuf = NvFlexRegisterD3DBuffer(g_flexLib, buffers->m_densities.Get(), numParticles, sizeof(float));
+		buffers->m_velocitiesBuf = NvFlexRegisterD3DBuffer(g_flexLib, buffers->m_velocities.Get(), numParticles, sizeof(Vec3));
 		buffers->m_indicesBuf = NvFlexRegisterD3DBuffer(g_flexLib, buffers->m_indices.Get(), numParticles, sizeof(int));
 
 		buffers->m_anisotropiesBufArr[0] = NvFlexRegisterD3DBuffer(g_flexLib, buffers->m_anisotropiesArr[0].Get(), numParticles, sizeof(Vec4));
@@ -483,7 +488,7 @@ FluidRenderBuffers* DemoContextD3D11::createFluidRenderBuffers(int numParticles,
 	return reinterpret_cast<FluidRenderBuffers*>(buffers);
 }
 
-void DemoContextD3D11::updateFluidRenderBuffers(FluidRenderBuffers* buffersIn, NvFlexSolver* solver, bool anisotropy, bool density)
+void DemoContextD3D11::updateFluidRenderBuffers(FluidRenderBuffers* buffersIn, NvFlexSolver* solver, bool anisotropy, bool density, bool velocity)
 {
 	FluidRenderBuffersD3D11& buffers = *reinterpret_cast<FluidRenderBuffersD3D11*>(buffersIn);
 	if (!anisotropy)
@@ -505,6 +510,11 @@ void DemoContextD3D11::updateFluidRenderBuffers(FluidRenderBuffers* buffersIn, N
 	else
 	{
 		NvFlexGetPhases(solver, buffers.m_densitiesBuf, NULL);
+	}
+
+	if (velocity)
+	{
+		NvFlexGetVelocities(solver, buffers.m_velocitiesBuf, NULL);
 	}
 
 	NvFlexGetActive(solver, buffers.m_indicesBuf, NULL);
@@ -1078,7 +1088,7 @@ DiffuseRenderBuffers* DemoContextD3D11::createDiffuseRenderBuffers(int numPartic
 			extern NvFlexLibrary* g_flexLib;
 
 			buffers->m_positionsBuf = NvFlexRegisterD3DBuffer(g_flexLib, buffers->m_positions.Get(), numParticles, sizeof(Vec4));
-			buffers->m_velocitiesBuf = NvFlexRegisterD3DBuffer(g_flexLib, buffers->m_velocities.Get(), numParticles, sizeof(Vec4));
+			buffers->m_velocitiesBuf = NvFlexRegisterD3DBuffer(g_flexLib, buffers->m_velocities.Get(), numParticles, sizeof(Vec3));
 
 			if (buffers->m_positionsBuf		== nullptr ||
 				buffers->m_velocitiesBuf	== nullptr)

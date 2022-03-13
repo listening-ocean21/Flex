@@ -72,7 +72,7 @@ class DemoContext
 
 	virtual FluidRenderBuffers* createFluidRenderBuffers(int numParticles, bool enableInterop) = 0;
 	virtual void drawPoints(FluidRenderBuffers* buffers, int n, int offset, float radius, float screenWidth, float screenAspect, float fov, Vec3 lightPos, Vec3 lightTarget, Matrix44 lightTransform, ::ShadowMap* shadowTex, bool showDensity) = 0;
-	virtual void updateFluidRenderBuffers(FluidRenderBuffers* buffers, NvFlexSolver* flex, bool anisotropy, bool density) = 0;
+	virtual void updateFluidRenderBuffers(FluidRenderBuffers* buffers, NvFlexSolver* flex, bool anisotropy, bool density, bool velocity) = 0;
 	virtual void updateFluidRenderBuffers(FluidRenderBuffers* buffers, Vec4* particles, float* densities, Vec4* anisotropy1, Vec4* anisotropy2, Vec4* anisotropy3, int numParticles, int* indices, int numIndices) = 0;
 	virtual void destroyFluidRenderBuffers(FluidRenderBuffers* buffers) = 0;
 

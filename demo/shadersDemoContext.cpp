@@ -88,7 +88,7 @@ void UpdateFluidRenderBuffers(FluidRenderBuffers* buffers, Vec4* particles, floa
 	s_context->updateFluidRenderBuffers(buffers, particles, densities, anisotropy1, anisotropy2, anisotropy3, numParticles, indices, numIndices);
 }
 
-void UpdateFluidRenderBuffers(FluidRenderBuffers* buffers, NvFlexSolver* flex, bool anisotropy, bool density) { return s_context->updateFluidRenderBuffers(buffers, flex, anisotropy, density); }
+void UpdateFluidRenderBuffers(FluidRenderBuffers* buffers, NvFlexSolver* flex, bool anisotropy, bool density, bool velocity) { return s_context->updateFluidRenderBuffers(buffers, flex, anisotropy, density, velocity); }
 
 void DestroyFluidRenderBuffers(FluidRenderBuffers* buffers) { return s_context->destroyFluidRenderBuffers(buffers); }
 

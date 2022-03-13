@@ -26,7 +26,8 @@ struct FluidRenderBuffersD3D11
 	FluidRenderBuffersD3D11():
 		m_positionsBuf(nullptr),
 		m_densitiesBuf(nullptr),
-		m_indicesBuf(nullptr)
+		m_indicesBuf(nullptr),
+		m_velocitiesBuf(nullptr)
 	{
 		for (int i = 0; i < 3; i++)
 		{
@@ -39,6 +40,7 @@ struct FluidRenderBuffersD3D11
 		NvFlexUnregisterD3DBuffer(m_positionsBuf);
 		NvFlexUnregisterD3DBuffer(m_densitiesBuf);
 		NvFlexUnregisterD3DBuffer(m_indicesBuf);
+		NvFlexUnregisterD3DBuffer(m_velocitiesBuf);
 
 		for (int i = 0; i < 3; i++)
 		{
@@ -50,6 +52,7 @@ struct FluidRenderBuffersD3D11
 	ComPtr<ID3D11Buffer> m_positions;
 	ComPtr<ID3D11Buffer> m_densities;
 	ComPtr<ID3D11Buffer> m_anisotropiesArr[3];
+	ComPtr<ID3D11Buffer> m_velocities;
 	ComPtr<ID3D11Buffer> m_indices;
 
 	ComPtr<ID3D11Buffer> m_fluid; // to be removed
@@ -58,6 +61,7 @@ struct FluidRenderBuffersD3D11
 	NvFlexBuffer* m_positionsBuf;
 	NvFlexBuffer* m_densitiesBuf;
 	NvFlexBuffer* m_anisotropiesBufArr[3];
+	NvFlexBuffer* m_velocitiesBuf;
 	NvFlexBuffer* m_indicesBuf;
 };
 
