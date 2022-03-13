@@ -165,7 +165,7 @@ std::map<NvFlexDistanceFieldId, GpuMesh*> g_fields;
 // flag to request collision shapes be updated
 bool g_shapesChanged = false;
 
-bool isExport = false;
+bool g_isExport = false;
 
 /* Note that this array of colors is altered by demo code, and is also read from global by graphics API impls */
 Colour g_colors[] =
@@ -1238,6 +1238,10 @@ void UpdateScene()
 	g_scenes[g_scene]->Update();
 }
 
+std::string g_exportFilePath = "C:/Users/WT/Documents/Projects/6Fluid Rendering/Large Scale Fluid/Assets/Resources/OfflineSPHData/";
+int g_exportFrameInterval = 2;
+int g_exportFrameIndex = 0;
+
 void RenderScene()
 {
 	const int numParticles = NvFlexGetActiveCount(g_solver);
@@ -1247,16 +1251,15 @@ void RenderScene()
 	// use VBO buffer wrappers to allow Flex to write directly to the OpenGL buffers
 	// Flex will take care of any CUDA interop mapping/unmapping during the get() operations
 
-	std::string exportFilePath = "C:/Users/WT/Documents/Projects/6Fluid Rendering/Large Scale Fluid/Assets/Resources/OfflineSPHData/";
 	if (numParticles)
 	{
 		if (g_interop)
 		{
 			// copy data directly from solver to the renderer buffers
-			UpdateFluidRenderBuffers(g_fluidRenderBuffers, g_solver, g_drawEllipsoids, g_drawDensity);
-			if (isExport)
+			UpdateFluidRenderBuffers(g_fluidRenderBuffers, g_solver, g_drawEllipsoids, g_drawDensity, g_isExport);
+			if (g_isExport)
 			{
-				ExportPartices(g_fluidRenderBuffers, exportFilePath, g_frame);
+				if(g_frame % g_exportFrameInterval == 0) ExportPartices(g_fluidRenderBuffers, g_exportFilePath, g_exportFrameIndex);
 				//return;
 			}
 		}
@@ -1300,9 +1303,13 @@ void RenderScene()
 		{
 			// copy data directly from solver to the renderer buffers
 			UpdateDiffuseRenderBuffers(g_diffuseRenderBuffers, g_solver);
-			if (isExport)
+			if (g_isExport)
 			{
-				ExportDiffusePartices(g_diffuseRenderBuffers, exportFilePath, g_frame);
+				if (g_frame % g_exportFrameInterval == 0)
+				{
+					ExportDiffusePartices(g_diffuseRenderBuffers, g_exportFilePath, g_exportFrameIndex, g_buffers->diffuseCount[0]);
+					g_exportFrameIndex++;
+				}
 				//return;
 			}
 		}
@@ -2576,7 +2583,12 @@ void InputKeyboardUp(unsigned char key, int x, int y)
 		break;
 	}
 	case 'm':
-		isExport = !isExport;
+		g_isExport = !g_isExport;
+		if (g_isExport)
+		{
+			DeleteAllFile(g_exportFilePath);
+			g_exportFrameIndex = 0;
+		}
 		break;
 	};
 }

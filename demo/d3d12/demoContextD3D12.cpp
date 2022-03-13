@@ -1434,7 +1434,7 @@ FluidRenderBuffers* DemoContextD3D12::createFluidRenderBuffers(int numParticles,
 	return reinterpret_cast<FluidRenderBuffers*>(new FluidRenderBuffersD3D12(numParticles));
 }
 
-void DemoContextD3D12::updateFluidRenderBuffers(FluidRenderBuffers* buffers, NvFlexSolver* flex, bool anisotropy, bool density)
+void DemoContextD3D12::updateFluidRenderBuffers(FluidRenderBuffers* buffers, NvFlexSolver* flex, bool anisotropy, bool density, bool velocity)
 {
 	printf("Not implemented");
 	assert(0);

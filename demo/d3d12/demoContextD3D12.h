@@ -150,7 +150,7 @@ public:
 	virtual void destroyFluidRenderer(FluidRenderer* renderer) override;
 
 	virtual FluidRenderBuffers* createFluidRenderBuffers(int numParticles, bool enableInterop) override;
-	virtual void updateFluidRenderBuffers(FluidRenderBuffers* buffers, NvFlexSolver* flex, bool anisotropy, bool density) override;
+	virtual void updateFluidRenderBuffers(FluidRenderBuffers* buffers, NvFlexSolver* flex, bool anisotropy, bool density, bool velocity) override;
 	virtual void updateFluidRenderBuffers(FluidRenderBuffers* buffers, Vec4* particles, float* densities, Vec4* anisotropy1, Vec4* anisotropy2, Vec4* anisotropy3, int numParticles, int* indices, int numIndices) override;
 	virtual void destroyFluidRenderBuffers(FluidRenderBuffers* buffers) override;
 

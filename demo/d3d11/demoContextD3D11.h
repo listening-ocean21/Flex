@@ -48,7 +48,7 @@ public:
 	virtual FluidRenderer* createFluidRenderer(uint32_t width, uint32_t height);
 	virtual void destroyFluidRenderer(FluidRenderer* renderer);
 	virtual FluidRenderBuffers* createFluidRenderBuffers(int numParticles, bool enableInterop);
-	virtual void updateFluidRenderBuffers(FluidRenderBuffers* buffers, NvFlexSolver* flex, bool anisotropy, bool density);
+	virtual void updateFluidRenderBuffers(FluidRenderBuffers* buffers, NvFlexSolver* flex, bool anisotropy, bool density, bool velocity);
 	virtual void updateFluidRenderBuffers(FluidRenderBuffers* buffers, Vec4* particles, float* densities, Vec4* anisotropy1, Vec4* anisotropy2, Vec4* anisotropy3, int numParticles, int* indices, int numIndices);
 	virtual void destroyFluidRenderBuffers(FluidRenderBuffers* buffers);
 	virtual GpuMesh* createGpuMesh(const Mesh* m);
@@ -120,5 +120,5 @@ protected:
 	bool m_timersSet = false;
 
 	friend void ExportPartices(FluidRenderBuffers* vBuffer, std::string vExportFilePath, int vFrameIndex);
-	friend void ExportDiffusePartices(DiffuseRenderBuffers* diffuseBuffers, std::string vExportFilePath, int vFrameIndex); 
+	friend void ExportDiffusePartices(DiffuseRenderBuffers* diffuseBuffers, std::string vExportFilePath, int vFrameIndex, int vDiffuseCount);
 };

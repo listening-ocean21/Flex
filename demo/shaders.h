@@ -171,7 +171,7 @@ FluidRenderBuffers* CreateFluidRenderBuffers(int numParticles, bool enableIntero
 void DestroyFluidRenderBuffers(FluidRenderBuffers* buffers);
 
 // update fluid particle buffers from a FlexSovler
-void UpdateFluidRenderBuffers(FluidRenderBuffers* buffers, NvFlexSolver* flex, bool anisotropy, bool density);
+void UpdateFluidRenderBuffers(FluidRenderBuffers* buffers, NvFlexSolver* flex, bool anisotropy, bool density, bool velocity);
 
 // update fluid particle buffers from host memory
 void UpdateFluidRenderBuffers(FluidRenderBuffers* buffers, 
