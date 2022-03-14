@@ -1238,7 +1238,7 @@ void UpdateScene()
 	g_scenes[g_scene]->Update();
 }
 
-std::string g_exportFilePath = "C:/Users/WT/Documents/Projects/6Fluid Rendering/Large Scale Fluid/Assets/Resources/OfflineSPHData/";
+std::string g_exportFilePath = "C:/Users/85213/Documents/Projects/6Fluid Rendering/Large Scale Fluid/Assets/Resources/OfflineSPHData/";
 int g_exportFrameInterval = 2;
 int g_exportFrameIndex = 0;
 
@@ -1308,7 +1308,6 @@ void RenderScene()
 				if (g_frame % g_exportFrameInterval == 0)
 				{
 					ExportDiffusePartices(g_diffuseRenderBuffers, g_exportFilePath, g_exportFrameIndex, g_buffers->diffuseCount[0]);
-					g_exportFrameIndex++;
 				}
 				//return;
 			}
@@ -1322,6 +1321,9 @@ void RenderScene()
 				numDiffuse);
 		}
 	}
+
+	if (g_isExport) g_exportFrameIndex++;
+
 
 	//---------------------------------------
 	// setup view and state
