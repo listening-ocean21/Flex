@@ -908,7 +908,7 @@ void Init(int scene, bool centerCamera = true)
 	for (int i = 0; i < g_buffers->positions.size(); ++i)
 		g_buffers->restPositions[i] = g_buffers->positions[i];
 
-	// builds rigids constraints
+	// builds rigids constraints¸ÕÌåÔ¼Êø
 	if (g_buffers->rigidOffsets.size())
 	{
 		assert(g_buffers->rigidOffsets.size() > 1);
@@ -1238,7 +1238,7 @@ void UpdateScene()
 	g_scenes[g_scene]->Update();
 }
 
-std::string g_exportFilePath = "C:/Users/WT/Documents/Projects/6Fluid Rendering/Large Scale Fluid/Assets/Resources/OfflineSPHData/";
+std::string g_exportFilePath = "E:/Large Scale Fluid/Assets/Resources/OfflineSPHData/";
 int g_exportFrameInterval = 2;
 int g_exportFrameIndex = 0;
 
@@ -1251,7 +1251,6 @@ void RenderScene()
 	// use VBO buffer wrappers to allow Flex to write directly to the OpenGL buffers
 	// Flex will take care of any CUDA interop mapping/unmapping during the get() operations
 
-	std::string exportFilePath = "E:/Large Scale Fluid/Assets/Resources/OfflineSPHData/";
 	if (numParticles)
 	{
 		if (g_interop)
@@ -1362,7 +1361,7 @@ void RenderScene()
 
 	//-------------------------------------
 	// shadowing pass 
-
+	//mesh data
 	if (g_meshSkinIndices.size())
 		SkinMesh();
 

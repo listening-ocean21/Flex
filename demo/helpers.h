@@ -166,7 +166,8 @@ void CreateParticleShape(const Mesh* srcMesh, Vec3 lower, Vec3 scale, float rota
 	int startIndex = int(g_buffers->positions.size());
 
 	{
-		mesh.Transform(RotationMatrix(rotation, Vec3(0.0f, 1.0f, 0.0f)));
+		Matrix44 rotationMat = RotationMatrix(rotation, Vec3(0.0f, 1.0f, 0.0f));
+		mesh.Transform(rotationMat);
 
 		Vec3 meshLower, meshUpper;
 		mesh.GetBounds(meshLower, meshUpper);
@@ -253,8 +254,16 @@ void CreateParticleShape(const Mesh* srcMesh, Vec3 lower, Vec3 scale, float rota
 				}
 			}
 		}
-		mesh.Transform(ScaleMatrix(1.0f + skinExpand)*TranslationMatrix(Point3(-0.5f*(meshUpper+meshLower))));
-		mesh.Transform(TranslationMatrix(Point3(lower + 0.5f*(meshUpper+meshLower))));	
+		Vec3 pos = Vec3(0.00000000, 0.850651026, 0.525731027);
+		pos = rotationMat * pos;
+		pos = xform * pos; //TODO::行向量与列向量
+		//xform *= rotationMat;
+		Matrix44 matrix = ScaleMatrix(1.0f + skinExpand) * TranslationMatrix(Point3(-0.5f * (meshUpper + meshLower)));
+		Matrix44 translationMat = TranslationMatrix(Point3(lower + 0.5f * (meshUpper + meshLower)));
+		translationMat *= matrix;
+		Matrix44 resultMat = translationMat * xform;
+		//Vec3 pos  = resultMat * Vec3(0.00000000, 0.850651026, 0.525731027);
+		mesh.Transform(translationMat);
 	
 	
 		if (springStiffness > 0.0f)
@@ -425,7 +434,9 @@ void SkinMesh()
 						int index = g_meshSkinIndices[i*4+w];
 						float weight = g_meshSkinWeights[i*4+w];
 
-						skinPos += (rotation*(g_meshRestPositions[i]-Point3(g_buffers->restPositions[index])) + Vec3(g_buffers->positions[index]))*weight;
+						Point3 restPos = Point3(g_buffers->restPositions[index]);
+						Vec3 pos = Vec3(g_buffers->positions[index]);
+						skinPos += (rotation*(g_meshRestPositions[i]- restPos) + pos)* weight;
 					}
 				}
 

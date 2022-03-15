@@ -29,8 +29,19 @@ public:
 		int y = int(sizey / restDistance);
 		int z = int(sizez / restDistance);
 
-		CreateParticleGrid(Vec3(0.0f, restDistance * 0.5f, 0.0f), x, y, z, restDistance, Vec3(0.0f), 1.0f, false, 0.0f, NvFlexMakePhase(0, eNvFlexPhaseSelfCollide | eNvFlexPhaseFluid));
-		CreateParticleGrid(Vec3(5, restDistance*0.5f, 5), x, y * 2, z, restDistance, Vec3(0.0f), 1.0f, false, 0.0f, NvFlexMakePhase(0, eNvFlexPhaseSelfCollide | eNvFlexPhaseFluid));
+		CreateParticleGrid(Vec3(0.0f, restDistance * 0.5f, 0.0f), x, y, z, restDistance, Vec3(0.0f), 1.0f, false, 0.0f, NvFlexMakePhase(group++, eNvFlexPhaseSelfCollide | eNvFlexPhaseFluid));
+		CreateParticleGrid(Vec3(5, restDistance*0.5f, 5), x, y * 2, z, restDistance, Vec3(0.0f), 1.0f, false, 0.0f, NvFlexMakePhase(group++, eNvFlexPhaseSelfCollide | eNvFlexPhaseFluid));
+
+		//void CreateParticleGrid(Vec3 lower, int dimx, int dimy, int dimz, float radius, Vec3 velocity, float invMass, bool rigid, float rigidStiffness, int phase, float jitter = 0.005f)
+
+		int n = 1;
+		//float spacing = 64 * restDistance * 0.9f / (2.0f * n);
+		float sampling = restDistance * 0.8f;
+		Vec3 size = sampling * 12.0f;
+		const float mass[] = { 0.1f };
+
+		CreateParticleShape(GetFilePathByPlatform("../../data/sphere.ply").c_str(), Vec3(5, restDistance * 0.5f, 5), size, 0.0f, sampling, Vec3(0.0f), mass[0], true, 1.0f, NvFlexMakePhase(group++, 0), true, 0.0001f);
+		//void CreateParticleShape(const char* filename, Vec3 lower, Vec3 scale, float rotation, float spacing, Vec3 velocity, float invMass, bool rigid, float rigidStiffness, int phase, bool skin, float jitter = 0.005f, Vec3 skinOffset = 0.0f, float skinExpand = 0.0f, Vec4 color = Vec4(0.0f), float springStiffness = 0.0f)
 
 		g_params.radius = radius;
 		g_params.dynamicFriction = 0.0f;
