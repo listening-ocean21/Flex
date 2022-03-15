@@ -1238,7 +1238,7 @@ void UpdateScene()
 	g_scenes[g_scene]->Update();
 }
 
-std::string g_exportFilePath = "C:/Users/85213/Documents/Projects/6Fluid Rendering/Large Scale Fluid/Assets/Resources/OfflineSPHData/";
+std::string g_exportFilePath = "C:/Users/WT/Documents/Projects/6Fluid Rendering/Large Scale Fluid/Assets/Resources/OfflineSPHData/";
 int g_exportFrameInterval = 2;
 int g_exportFrameIndex = 0;
 
@@ -1322,9 +1322,6 @@ void RenderScene()
 		}
 	}
 
-	if (g_isExport) g_exportFrameIndex++;
-
-
 	//---------------------------------------
 	// setup view and state
 
@@ -1366,6 +1363,12 @@ void RenderScene()
 
 	if (g_meshSkinIndices.size())
 		SkinMesh();
+
+	if (g_isExport)
+	{
+		ExportMeshPos(g_mesh, g_exportFilePath, g_exportFrameIndex);
+		g_exportFrameIndex++;
+	}
 
 	// create shadow maps
 	ShadowBegin(g_shadowMap);
@@ -2590,6 +2593,7 @@ void InputKeyboardUp(unsigned char key, int x, int y)
 		{
 			DeleteAllFile(g_exportFilePath);
 			g_exportFrameIndex = 0;
+			ExportMeshIndex(g_mesh, g_exportFilePath);
 		}
 		break;
 	};

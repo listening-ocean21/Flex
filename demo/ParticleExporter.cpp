@@ -242,6 +242,35 @@ void ExportDiffusePartices(DiffuseRenderBuffers* diffuseBuffers, std::string vEx
 	velocityBuffer->Release();
 }
 
+void ExportMeshIndex(Mesh* mesh, std::string vExportFilePath)
+{
+	std::ofstream* outfile = new std::ofstream(vExportFilePath + ".index", std::ios::binary);
+	if (!outfile->is_open())
+	{
+		std::cout << "Cannot open a file to save diffuse particles.";
+		return;
+	}
+
+	outfile->write((char*)mesh->m_indices.data(), sizeof(uint32_t) * mesh->m_indices.size());
+	outfile->close();
+	delete outfile;
+}
+
+void ExportMeshPos(Mesh* mesh, std::string vExportFilePath, int vFrameIndex)
+{
+	vExportFilePath += std::to_string(vFrameIndex / 130);
+	vExportFilePath += "/";
+	vExportFilePath += std::to_string(vFrameIndex);
+	vExportFilePath += ".pos";
+	std::ofstream* outfile = new std::ofstream(vExportFilePath, std::ios::binary);
+
+	outfile->write((char*)mesh->m_positions.data(), sizeof(Point3) * mesh->m_positions.size());
+	outfile->close();
+	delete outfile;
+}
+
+
+
 //判断是否是".."目录和"."目录
 bool is_special_dir(const char* path)
 {
@@ -262,8 +291,6 @@ void get_file_path(const char* path, const char* file_name, char* file_path)
 	strcat_s(file_path, sizeof(char) * _MAX_PATH, "\\*");
 }
 
-
-//显示删除失败原因
 void show_error(const char* file_name)
 {
 	errno_t err;
