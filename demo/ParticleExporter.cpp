@@ -251,7 +251,7 @@ void ExportMeshIndex(Mesh* mesh, std::string vExportFilePath)
 		return;
 	}
 
-	outfile->write((char*)mesh->m_indices.data(), sizeof(uint32_t) * mesh->m_indices.size());
+	if (mesh) outfile->write((char*)mesh->m_indices.data(), sizeof(uint32_t) * mesh->m_indices.size());
 	outfile->close();
 	delete outfile;
 }
@@ -264,7 +264,7 @@ void ExportMeshPos(Mesh* mesh, std::string vExportFilePath, int vFrameIndex)
 	vExportFilePath += ".pos";
 	std::ofstream* outfile = new std::ofstream(vExportFilePath, std::ios::binary);
 
-	outfile->write((char*)mesh->m_positions.data(), sizeof(Point3) * mesh->m_positions.size());
+	if (mesh) outfile->write((char*)mesh->m_positions.data(), sizeof(Point3) * mesh->m_positions.size());
 	outfile->close();
 	delete outfile;
 }
