@@ -1259,7 +1259,7 @@ void RenderScene()
 			UpdateFluidRenderBuffers(g_fluidRenderBuffers, g_solver, g_drawEllipsoids, g_drawDensity, g_isExport);
 			if (g_isExport)
 			{
-				if(g_frame % g_exportFrameInterval == 0) ExportPartices(g_fluidRenderBuffers, g_exportFilePath, g_exportFrameIndex);
+				if(g_frame % g_exportFrameInterval == 0) ExportPartices(g_fluidRenderBuffers, g_exportFilePath, g_exportFrameIndex, g_numSolidParticles);
 				//return;
 			}
 		}
@@ -1366,7 +1366,7 @@ void RenderScene()
 
 	if (g_isExport)
 	{
-		ExportMeshPos(g_mesh, g_exportFilePath, g_exportFrameIndex);
+		if (g_frame % g_exportFrameInterval == 0) ExportMeshPos(g_mesh, g_exportFilePath, g_exportFrameIndex);
 		g_exportFrameIndex++;
 	}
 

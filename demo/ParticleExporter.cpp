@@ -23,7 +23,7 @@ struct SDiffuseParticle
 	float3 velocity;
 };
 
-void ExportPartices(FluidRenderBuffers* vBuffer, std::string vExportFilePath, int vFrameIndex)
+void ExportPartices(FluidRenderBuffers* vBuffer, std::string vExportFilePath, int vFrameIndex, int vSolidParticleNum)
 {
 	FluidRenderBuffersD3D11& buffer = *reinterpret_cast<FluidRenderBuffersD3D11*>(vBuffer);
 	AppGraphCtxD3D11* context = reinterpret_cast<DemoContextD3D11*>(GetDemoContext())->m_appGraphCtxD3D11;
@@ -144,7 +144,7 @@ void ExportPartices(FluidRenderBuffers* vBuffer, std::string vExportFilePath, in
 	float4* p5 = (float4*)resultResources5.pData;
 	context->m_deviceContext->Map(velocityBuffer, 0, D3D11_MAP_READ, 0, &resultResources6);
 	float3* p6 = (float3*)resultResources6.pData;
-	for (int i = 0; i < buffer.m_numParticles; i++)
+	for (int i = vSolidParticleNum; i < buffer.m_numParticles - vSolidParticleNum; i++)
 	{
 		SParticle data;
 		data.position = float3(p1[i].x, p1[i].y, p1[i].z);
