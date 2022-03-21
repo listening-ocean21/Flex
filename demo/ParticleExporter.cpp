@@ -23,7 +23,7 @@ struct SDiffuseParticle
 	float3 velocity;
 };
 
-void ExportPartices(FluidRenderBuffers* vBuffer, std::string vExportFilePath, int vFrameIndex)
+void ExportPartices(FluidRenderBuffers* vBuffer, std::string vExportFilePath, int vFrameIndex, int vSolidParticleNum)
 {
 	FluidRenderBuffersD3D11& buffer = *reinterpret_cast<FluidRenderBuffersD3D11*>(vBuffer);
 	AppGraphCtxD3D11* context = reinterpret_cast<DemoContextD3D11*>(GetDemoContext())->m_appGraphCtxD3D11;
@@ -144,7 +144,7 @@ void ExportPartices(FluidRenderBuffers* vBuffer, std::string vExportFilePath, in
 	float4* p5 = (float4*)resultResources5.pData;
 	context->m_deviceContext->Map(velocityBuffer, 0, D3D11_MAP_READ, 0, &resultResources6);
 	float3* p6 = (float3*)resultResources6.pData;
-	for (int i = 0; i < buffer.m_numParticles; i++)
+	for (int i = vSolidParticleNum; i < buffer.m_numParticles - vSolidParticleNum; i++)
 	{
 		SParticle data;
 		data.position = float3(p1[i].x, p1[i].y, p1[i].z);
@@ -242,6 +242,35 @@ void ExportDiffusePartices(DiffuseRenderBuffers* diffuseBuffers, std::string vEx
 	velocityBuffer->Release();
 }
 
+void ExportMeshIndex(Mesh* mesh, std::string vExportFilePath)
+{
+	std::ofstream* outfile = new std::ofstream(vExportFilePath + ".index", std::ios::binary);
+	if (!outfile->is_open())
+	{
+		std::cout << "Cannot open a file to save diffuse particles.";
+		return;
+	}
+
+	if (mesh) outfile->write((char*)mesh->m_indices.data(), sizeof(uint32_t) * mesh->m_indices.size());
+	outfile->close();
+	delete outfile;
+}
+
+void ExportMeshPos(Mesh* mesh, std::string vExportFilePath, int vFrameIndex)
+{
+	vExportFilePath += std::to_string(vFrameIndex / 130);
+	vExportFilePath += "/";
+	vExportFilePath += std::to_string(vFrameIndex);
+	vExportFilePath += ".pos";
+	std::ofstream* outfile = new std::ofstream(vExportFilePath, std::ios::binary);
+
+	if (mesh) outfile->write((char*)mesh->m_positions.data(), sizeof(Point3) * mesh->m_positions.size());
+	outfile->close();
+	delete outfile;
+}
+
+
+
 //判断是否是".."目录和"."目录
 bool is_special_dir(const char* path)
 {
@@ -262,8 +291,6 @@ void get_file_path(const char* path, const char* file_name, char* file_path)
 	strcat_s(file_path, sizeof(char) * _MAX_PATH, "\\*");
 }
 
-
-//显示删除失败原因
 void show_error(const char* file_name)
 {
 	errno_t err;

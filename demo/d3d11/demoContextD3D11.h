@@ -119,6 +119,6 @@ protected:
 	ID3D11Query* m_renderCompletionFence;
 	bool m_timersSet = false;
 
-	friend void ExportPartices(FluidRenderBuffers* vBuffer, std::string vExportFilePath, int vFrameIndex);
+	friend void ExportPartices(FluidRenderBuffers* vBuffer, std::string vExportFilePath, int vFrameIndex, int vSolidParticleNum);
 	friend void ExportDiffusePartices(DiffuseRenderBuffers* diffuseBuffers, std::string vExportFilePath, int vFrameIndex, int vDiffuseCount);
 };
