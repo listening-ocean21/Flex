@@ -33,7 +33,7 @@ public:
 		float sampling = restDistance * 0.8f;
 		Vec3 size = sampling * 12.0f;
 		const float inv_mass[] = { 1};
-		//CreateParticleShape(GetFilePathByPlatform("../../data/bunny.ply").c_str(), Vec3(5, restDistance, 5), size, 0.0f, sampling, Vec3(0.0f), inv_mass[0], true, 1.0f, NvFlexMakePhase(0, 0), true, 0.0001f);
+		CreateParticleShape(GetFilePathByPlatform("../../data/bunny.ply").c_str(), Vec3(5, restDistance, 5), size, 0.0f, sampling, Vec3(0.0f), inv_mass[0], true, 1.0f, NvFlexMakePhase(0, 0), true, 0.0001f);
 		//CreateParticleShape(GetFilePathByPlatform("../../data/dragon.obj").c_str(), Vec3(5, restDistance, 5), size * 3, 0.0f, sampling, Vec3(0.0f), inv_mass[0], true, 1.0f, NvFlexMakePhase(0, 0), true, 0.0001f);
 		//g_numSolidParticles = g_buffers->positions.size();
 

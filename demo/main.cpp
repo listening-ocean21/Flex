@@ -1238,7 +1238,7 @@ void UpdateScene()
 	g_scenes[g_scene]->Update();
 }
 
-std::string g_exportFilePath = "C:/Users/WT/Documents/Projects/6Fluid Rendering/Large Scale Fluid/Assets/Resources/OfflineSPHData/";
+std::string g_exportFilePath = "E:/Large Scale Fluid/Assets/Resources/OfflineSPHData/";
 int g_exportFrameInterval = 2;
 int g_exportFrameIndex = 0;
 

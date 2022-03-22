@@ -22,7 +22,11 @@ struct SDiffuseParticle
 	float4 position; // lifetime in w
 	float3 velocity;
 };
-
+struct SMeshVertexAttribute
+{
+	float3 position;
+	float4 color;
+};
 void ExportPartices(FluidRenderBuffers* vBuffer, std::string vExportFilePath, int vFrameIndex, int vSolidParticleNum)
 {
 	FluidRenderBuffersD3D11& buffer = *reinterpret_cast<FluidRenderBuffersD3D11*>(vBuffer);
@@ -261,23 +265,29 @@ void ExportMeshPos(Mesh* mesh, std::string vExportFilePath, int vFrameIndex)
 	vExportFilePath += std::to_string(vFrameIndex / 130);
 	vExportFilePath += "/";
 	vExportFilePath += std::to_string(vFrameIndex);
-	vExportFilePath += ".pos";
+	vExportFilePath += ".posAndColor";
 	std::ofstream* outfile = new std::ofstream(vExportFilePath, std::ios::binary);
 
-	if (mesh) outfile->write((char*)mesh->m_positions.data(), sizeof(Point3) * mesh->m_positions.size());
+	if (mesh)
+	{
+		for (int i = 0; i < mesh->GetNumVertices(); i++)
+		{
+			SMeshVertexAttribute data;
+			data.position = float3(mesh->m_positions[i]);
+			data.color = float4(mesh->m_colours[i]);
+			outfile->write((char*)&data, sizeof(SMeshVertexAttribute));
+		}
+	}
 	outfile->close();
 	delete outfile;
 }
 
 
-
-//判断是否是".."目录和"."目录
 bool is_special_dir(const char* path)
 {
 	return strcmp(path, "..") == 0 || strcmp(path, ".") == 0;
 }
 
-//判断文件属性是目录还是文件
 bool is_dir(int attrib)
 {
 	return attrib == 16 || attrib == 18 || attrib == 20;
